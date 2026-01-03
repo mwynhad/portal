@@ -1,0 +1,271 @@
+# ============================================================
+# Portal Configuration
+# CDN-style distributed Minecraft server federation
+# ============================================================
+# This file controls all aspects of Portal's behavior.
+# Most settings can be changed without a server restart,
+# but network settings require a restart to take effect.
+# ============================================================
+
+# ------------------------------------------------------------
+# NODE IDENTITY
+# Configure how this server identifies itself in the network
+# ------------------------------------------------------------
+
+# Unique identifier for this node (leave empty to auto-generate)
+# This ID is used internally for message routing
+node-id: ""
+
+# Human-readable name for this node (shown in admin commands)
+# Use descriptive names like "us-east-1", "lobby-1", "survival-main"
+node-name: "node-1"
+
+# Region identifier for latency-based routing and grouping
+# Examples: "us-east", "eu-west", "ap-south", "local"
+region: "us-east"
+
+# Is this the primary/host node?
+# The primary node is authoritative for conflict resolution
+# Only ONE node in the network should be primary
+is-primary: false
+
+# ------------------------------------------------------------
+# NETWORK CONFIGURATION
+# Settings for inter-node communication
+# ------------------------------------------------------------
+network:
+  
+  # Redis configuration for pub/sub messaging
+  # Redis is used for reliable message delivery and state storage
+  redis:
+    # Enable Redis-based communication
+    enabled: true
+    
+    # Redis server connection details
+    host: "localhost"
+    port: 6379
+    password: ""
+    database: 0
+    
+    # Use Redis Cluster for high availability (requires cluster setup)
+    cluster: false
+    # List of cluster node addresses (only used if cluster: true)
+    cluster-nodes: []
+    # Example:
+    # cluster-nodes:
+    #   - "redis-node1.example.com:7000"
+    #   - "redis-node2.example.com:7001"
+    
+    # Connection pool settings for optimal performance
+    pool:
+      # Minimum idle connections to maintain
+      min-idle: 4
+      # Maximum idle connections in pool
+      max-idle: 8
+      # Maximum total connections
+      max-total: 16
+  
+  # Direct node-to-node TCP connections for lowest latency
+  # Recommended for production deployments with <50ms RTT
+  direct:
+    # Enable direct TCP connections between nodes
+    enabled: true
+    
+    # Port for incoming direct connections
+    bind-port: 25580
+    
+    # Bind address (0.0.0.0 for all interfaces, or specific IP)
+    bind-address: "0.0.0.0"
+    
+    # Known peer nodes for direct connection
+    # Portal will automatically connect to these on startup
+    peers: []
+    # Example configuration:
+    # peers:
+    #   - host: "node2.example.com"
+    #     port: 25580
+    #   - host: "node3.example.com"
+    #     port: 25580
+    #   - host: "192.168.1.100"
+    #     port: 25580
+  
+  # Protocol settings for message serialization
+  protocol:
+    # Compression threshold in bytes (0 to disable compression)
+    # Messages larger than this will be LZ4 compressed
+    compression-threshold: 256
+    
+    # Use binary protocol (protobuf) vs JSON
+    # Binary is faster and smaller, JSON is human-readable for debugging
+    use-binary: true
+    
+    # Enable message batching for improved network efficiency
+    # Batching groups multiple small messages into fewer packets
+    batch-messages: true
+    
+    # Batch flush interval in milliseconds
+    # Lower = more responsive, higher = more efficient
+    batch-interval-ms: 5
+    
+    # Maximum messages per batch
+    max-batch-size: 100
+
+# ------------------------------------------------------------
+# SYNCHRONIZATION SETTINGS
+# Control what data is synchronized between nodes
+# ------------------------------------------------------------
+sync:
+  
+  # Player synchronization settings
+  players:
+    # Position broadcast interval in ticks (1 tick = 50ms)
+    # 1 = every tick (smoothest), higher values reduce bandwidth
+    position-interval: 1
+    
+    # Interpolation buffer size in ticks
+    # Higher values = smoother movement but more latency
+    interpolation-buffer: 3
+    
+    # Sync player inventory changes across nodes
+    sync-inventory: true
+    
+    # Sync health and food levels
+    sync-vitals: true
+    
+    # Sync potion effects
+    sync-effects: true
+    
+    # Sync game mode changes
+    sync-gamemode: true
+  
+  # Entity synchronization settings
+  entities:
+    # Enable entity synchronization
+    enabled: true
+    
+    # Sync interval in ticks
+    sync-interval: 2
+    
+    # Entity types to synchronize
+    # Add or remove types based on your needs
+    sync-types:
+      - ITEM
+      - ARROW
+      - FIREBALL
+      - SNOWBALL
+      - EGG
+      - TRIDENT
+      - ENDER_PEARL
+      - EXPERIENCE_ORB
+      - TNT
+      - FALLING_BLOCK
+      - BOAT
+      - MINECART
+    
+    # Sync mob entities (more expensive, increases bandwidth)
+    sync-mobs: true
+    
+    # Radius around players to sync entities (in blocks)
+    sync-radius: 64
+  
+  # World/block synchronization settings
+  world:
+    # Enable world synchronization
+    enabled: true
+    
+    # Immediately sync block changes (breaking/placing)
+    immediate-block-sync: true
+    
+    # Batch multiple block updates for efficiency
+    batch-block-updates: true
+    
+    # Batch flush interval in milliseconds
+    batch-interval-ms: 50
+    
+    # Sync chunk data when players teleport
+    sync-chunks-on-teleport: true
+    
+    # Maximum chunks to sync per tick (performance limiter)
+    max-chunks-per-tick: 4
+  
+  # Chat synchronization settings
+  chat:
+    # Enable cross-node chat
+    enabled: true
+    
+    # Show node prefix in chat messages (e.g., "[US-East] Player: Hi")
+    show-node-prefix: false
+  
+  # Event synchronization (interactions, combat, etc.)
+  events:
+    # Enable event synchronization
+    enabled: true
+    
+    # Sync combat/damage events for cross-node PvP
+    sync-combat: true
+    
+    # Sync block interactions (buttons, levers, doors)
+    sync-interactions: true
+    
+    # Sync container access (chests, furnaces)
+    sync-containers: true
+
+# ------------------------------------------------------------
+# VIRTUAL PLAYER SETTINGS
+# Configure how remote players appear on this node
+# ------------------------------------------------------------
+virtual-players:
+  # Use NPC entities for remote players
+  # If false, players won't be visible but chat/events still sync
+  use-npc: true
+  
+  # Sync and display player skins
+  sync-skins: true
+  
+  # Show remote players in the tab list
+  show-in-tablist: true
+  
+  # Show name tags above remote players
+  show-nametag: true
+  
+  # Enable collision with virtual players
+  enable-collision: true
+
+# ------------------------------------------------------------
+# PERFORMANCE SETTINGS
+# Tune for your server's resources and requirements
+# ------------------------------------------------------------
+performance:
+  # Worker threads for network processing
+  # More threads = better throughput, more CPU usage
+  network-threads: 4
+  
+  # Worker threads for sync processing
+  sync-threads: 2
+  
+  # Maximum pending messages before dropping oldest
+  # Prevents memory exhaustion under heavy load
+  max-pending-messages: 10000
+  
+  # Enable metrics collection for monitoring
+  enable-metrics: true
+  
+  # Latency measurement interval in seconds
+  latency-check-interval: 5
+
+# ------------------------------------------------------------
+# DEBUG SETTINGS
+# For troubleshooting and development
+# ------------------------------------------------------------
+debug:
+  # Enable debug mode (verbose logging)
+  enabled: false
+  
+  # Log all network packets (very verbose!)
+  log-packets: false
+  
+  # Log synchronization events
+  log-sync: false
+  
+  # Log latency measurements
+  log-latency: true

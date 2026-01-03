@@ -1,0 +1,44 @@
+name: Portal
+version: ${version}
+main: org.mwynhad.portal.Portal
+api-version: '1.21'
+description: Portal - CDN-style distributed server instances with full player interaction
+author: Portal Team
+website: https://github.com/mwynhad/portal
+
+commands:
+  portal:
+    description: Main command for Portal
+    usage: /portal <subcommand>
+    aliases: [p, ptl]
+  
+  pnode:
+    description: Node management commands
+    usage: /pnode <list|info|disconnect>
+    permission: portal.admin.nodes
+  
+  psync:
+    description: Force synchronization
+    usage: /psync <players|entities|world>
+    permission: portal.admin.sync
+
+permissions:
+  portal.admin:
+    description: Full admin access to Portal
+    default: op
+    children:
+      portal.admin.nodes: true
+      portal.admin.sync: true
+      portal.admin.debug: true
+  
+  portal.admin.nodes:
+    description: Manage federation nodes
+    default: op
+  
+  portal.admin.sync:
+    description: Force sync operations
+    default: op
+  
+  portal.admin.debug:
+    description: Debug commands
+    default: op
