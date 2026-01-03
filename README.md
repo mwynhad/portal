@@ -208,10 +208,6 @@ src/main/kotlin/org/mwynhad/portal/
 └── metrics/                # Performance metrics
 ```
 
-## License
+## License & copyright
 
-MIT License - See LICENSE file
-
-## Contributing
-
-Contributions welcome! Please read CONTRIBUTING.md first.
+(c) Mwynhad Softworks LLC 2026 - present (under the MIT Licence)
